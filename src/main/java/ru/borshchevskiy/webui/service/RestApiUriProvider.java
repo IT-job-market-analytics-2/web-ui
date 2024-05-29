@@ -18,7 +18,7 @@ public class RestApiUriProvider {
     private String signUpEndpoint;
     @Value("rest-api.endpoints.auth.sign-in:/auth/signin")
     private String signInEndpoint;
-    @Value("rest-api.endpoints.auth.sign-in:/user")
+    @Value("rest-api.endpoints.user.user:/user")
     private String userEndpoint;
     private String rootUri;
     private String signUpUri;

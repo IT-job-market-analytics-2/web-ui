@@ -5,3 +5,5 @@ rest-api:
     auth:
       sign-up: "/auth/signup"
       sign-in: "/auth/signin"
+    user:
+      user: "/user"

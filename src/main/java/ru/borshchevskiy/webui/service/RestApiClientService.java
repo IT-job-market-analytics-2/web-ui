@@ -8,8 +8,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.http.client.ClientHttpResponse;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestClient;
-import org.springframework.web.util.UriComponents;
-import org.springframework.web.util.UriComponentsBuilder;
 import ru.borshchevskiy.webui.dto.auth.SignInDto;
 import ru.borshchevskiy.webui.dto.auth.SignInResponseDto;
 import ru.borshchevskiy.webui.dto.auth.SignUpDto;
@@ -79,7 +77,7 @@ public class RestApiClientService {
         HttpStatusCode statusCode;
         try (response; InputStream body = response.getBody()) {
             ErrorResponseDto errorResponseDto = objectMapper.readValue(body, ErrorResponseDto.class);
-            errorMessage = errorResponseDto.getMessage().isBlank() ? DEFAULT_ERROR_MESSAGE 
+            errorMessage = errorResponseDto.getMessage().isBlank() ? DEFAULT_ERROR_MESSAGE
                     : errorResponseDto.getMessage();
             statusCode = response.getStatusCode();
         } catch (IOException e) {
