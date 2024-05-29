@@ -1,1 +1,7 @@
-
+rest-api:
+  host: ""
+  port:
+  endpoints:
+    auth:
+      sign-up: "/auth/signup"
+      sign-in: "/auth/signin"
