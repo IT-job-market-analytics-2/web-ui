@@ -30,10 +30,10 @@ public class RestApiClientService {
     private final ObjectMapper objectMapper;
     private final RestApiUriProvider restApiUriProvider;
 
-    public RestApiClientService(RestClient restClient,
+    public RestApiClientService(RestClient.Builder builder,
                                 ObjectMapper objectMapper,
                                 RestApiUriProvider restApiUriProvider) {
-        this.restClient = restClient;
+        this.restClient = builder.build();
         this.objectMapper = objectMapper;
         this.restApiUriProvider = restApiUriProvider;
     }
