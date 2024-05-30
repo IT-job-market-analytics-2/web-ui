@@ -25,7 +25,7 @@ public class SignUpController {
     }
 
     @PostMapping
-    public String performSignUp(SignUpDto signUpDto, Model model) {
+    public String performSignUp(SignUpDto signUpDto) {
         restApiClientService.signUp(signUpDto);
         return "redirect:/sign-in";
     }
