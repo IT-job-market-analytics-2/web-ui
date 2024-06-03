@@ -5,6 +5,7 @@ import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import ru.borshchevskiy.webui.controller.SignInController;
+import ru.borshchevskiy.webui.dto.auth.SignInDto;
 import ru.borshchevskiy.webui.dto.user.UserDto;
 import ru.borshchevskiy.webui.exception.restapi.RestApiException;
 
@@ -15,11 +16,11 @@ public class SignInControllerAdvice {
     public String handleRestApiException(RestApiException exception,
                                          HttpServletRequest request,
                                          RedirectAttributes redirectAttributes) {
-        UserDto user = new UserDto();
+        SignInDto user = new SignInDto();
         String username = request.getParameter("username");
         user.setUsername(username);
         redirectAttributes.addFlashAttribute("user", user);
-        redirectAttributes.addFlashAttribute("errorMessage", exception.getMessage());
+        redirectAttributes.addFlashAttribute("errorMessages", exception.getMessages());
         return "redirect:/sign-in";
     }
 }
