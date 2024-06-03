@@ -23,6 +23,7 @@ public class HomePageController {
         String accessToken = (String) session.getAttribute("accessToken");
         UserDto user = restApiClientService.getUser(accessToken);
         model.addAttribute("username", user.getUsername());
+        model.addAttribute("isLoggedIn", true);
         return "index";
     }
 }
