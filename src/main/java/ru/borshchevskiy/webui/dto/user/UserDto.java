@@ -1,7 +1,10 @@
 package ru.borshchevskiy.webui.dto.user;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
 import java.util.Objects;
 
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class UserDto {
     private String username;
 
