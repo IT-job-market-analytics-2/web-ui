@@ -1,0 +1,10 @@
+server:
+  port: 8081
+rest-api:
+  host: "localhost"
+  port: "8080"
+  scheme: "http"
+  endpoints:
+    auth:
+      sign-up: "/auth/registration"
+      sign-in: "/auth/login"

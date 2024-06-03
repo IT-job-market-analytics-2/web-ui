@@ -1,9 +1,10 @@
 rest-api:
   host: ""
   port:
+  scheme: "http"
   endpoints:
     auth:
       sign-up: "/auth/signup"
       sign-in: "/auth/signin"
-    user:
-      user: "/user"
+    users:
+      user: "users/getUserInfo"

@@ -8,17 +8,17 @@ import org.springframework.web.util.UriComponentsBuilder;
 @Component
 public class RestApiUriProvider {
 
-    @Value("rest-api.scheme")
+    @Value("${rest-api.scheme}")
     private String restApiScheme;
-    @Value("rest-api.port")
+    @Value("${rest-api.port}")
     private String restApiPort;
-    @Value("rest-api.host")
+    @Value("${rest-api.host}")
     private String restApiHost;
-    @Value("rest-api.endpoints.auth.sign-up:/auth/signup")
+    @Value("${rest-api.endpoints.auth.sign-up:/auth/signup}")
     private String signUpEndpoint;
-    @Value("rest-api.endpoints.auth.sign-in:/auth/signin")
+    @Value("${rest-api.endpoints.auth.sign-in:/auth/signin}")
     private String signInEndpoint;
-    @Value("rest-api.endpoints.user.user:/user")
+    @Value("${rest-api.endpoints.users.user:/users/getUserInfo}")
     private String userEndpoint;
     private String rootUri;
     private String signUpUri;
@@ -39,7 +39,7 @@ public class RestApiUriProvider {
     }
 
     private String buildUriFromRoot(String path) {
-        return UriComponentsBuilder.fromPath(rootUri)
+        return UriComponentsBuilder.fromUriString(rootUri)
                 .path(path)
                 .build()
                 .toUriString();
