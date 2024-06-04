@@ -62,8 +62,8 @@ class SignUpControllerTest {
         String badUsername = "badUsername";
         String badUsernameMessage = "Bad username message";
 
-        UserDto redirectUserDto = new UserDto();
-        redirectUserDto.setUsername(badUsername);
+        SignUpDto redirectDto = new SignUpDto();
+        redirectDto.setUsername(badUsername);
 
         doNothing().when(restApiClientService).signUp(eq(signUpDto));
         doThrow(new RestApiException(badUsernameMessage)).when(restApiClientService).signUp(not(eq(signUpDto)));
@@ -73,7 +73,7 @@ class SignUpControllerTest {
                         .param("password", testPassword))
                 .andExpectAll(
                         redirectedUrl("/sign-up"),
-                        flash().attribute("user", redirectUserDto),
+                        flash().attribute("user", redirectDto),
                         flash().attribute("errorMessage", badUsernameMessage)
                 );
     }

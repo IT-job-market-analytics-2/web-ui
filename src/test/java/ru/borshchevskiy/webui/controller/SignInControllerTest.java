@@ -88,8 +88,8 @@ class SignInControllerTest {
         signInResponseDto.setAccessToken(accessToken);
         signInResponseDto.setRefreshToken(refreshToken);
 
-        UserDto redirectUserDto = new UserDto();
-        redirectUserDto.setUsername(testUsername);
+        SignInDto redirectDto = new SignInDto();
+        redirectDto.setUsername(testUsername);
 
         doReturn(signInResponseDto).when(restApiClientService).signIn(eq(signInDto));
         doThrow(new RestApiException(badPasswordMessage)).when(restApiClientService).signIn(not(eq(signInDto)));
@@ -99,7 +99,7 @@ class SignInControllerTest {
                         .param("password", badPassword))
                 .andExpectAll(
                         redirectedUrl("/sign-in"),
-                        flash().attribute("user", redirectUserDto),
+                        flash().attribute("user", redirectDto),
                         flash().attribute("errorMessage", badPasswordMessage)
                 )
                 .andReturn()

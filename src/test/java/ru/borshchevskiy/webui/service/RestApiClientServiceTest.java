@@ -177,7 +177,7 @@ class RestApiClientServiceTest {
                             .contentType(MediaType.APPLICATION_JSON)
                             .body(objectMapper.writeValueAsBytes(userDto)));
 
-            assertEquals(userDto, restApiClientService.getUser(accessToken));
+            assertEquals(userDto, restApiClientService.getUser());
         }
 
         @Test
@@ -193,7 +193,7 @@ class RestApiClientServiceTest {
                     .andRespond(withUnauthorizedRequest()
                             .body(objectMapper.writeValueAsBytes("Unauthorized")));
 
-            assertThrows(RestApiUnauthorizedException.class, () -> restApiClientService.getUser(accessToken));
+            assertThrows(RestApiUnauthorizedException.class, () -> restApiClientService.getUser());
         }
     }
 
