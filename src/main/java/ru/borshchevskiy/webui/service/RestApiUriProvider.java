@@ -20,10 +20,16 @@ public class RestApiUriProvider {
     private String signInEndpoint;
     @Value("${rest-api.endpoints.users.user:/users/getUserInfo}")
     private String userEndpoint;
+    @Value("${rest-api.endpoints.subscriptions.current:/subscriptions}")
+    private String currentSubscriptions;
+    @Value("${rest-api.endpoints.subscriptions.available:/subscriptions/allAvailable}")
+    private String availableSubscriptions;
     private String rootUri;
     private String signUpUri;
     private String signInUri;
     private String userUri;
+    private String currentSubscriptionsUri;
+    private String availableSubscriptionsUri;
 
     @PostConstruct
     private void init() {
@@ -36,6 +42,8 @@ public class RestApiUriProvider {
         this.signUpUri = buildUriFromRoot(signUpEndpoint);
         this.signInUri = buildUriFromRoot(signInEndpoint);
         this.userUri = buildUriFromRoot(userEndpoint);
+        this.currentSubscriptionsUri = buildUriFromRoot(currentSubscriptions);
+        this.availableSubscriptionsUri = buildUriFromRoot(availableSubscriptions);
     }
 
     private String buildUriFromRoot(String path) {
@@ -55,5 +63,13 @@ public class RestApiUriProvider {
 
     public String getUserUri() {
         return userUri;
+    }
+
+    public String getCurrentSubscriptionsUri() {
+        return currentSubscriptionsUri;
+    }
+
+    public String getAvailableSubscriptionsUri() {
+        return availableSubscriptionsUri;
     }
 }

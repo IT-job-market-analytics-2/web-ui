@@ -4,7 +4,10 @@ rest-api:
   scheme: "http"
   endpoints:
     auth:
-      sign-up: "/auth/signup"
-      sign-in: "/auth/signin"
+      sign-up: "/auth/registration"
+      sign-in: "/auth/login"
     users:
-      user: "users/getUserInfo"
+      user: "/users/getUserInfo"
+    subscriptions:
+      available: "/subscriptions/allAvailable"
+      current: "/subscriptions"
