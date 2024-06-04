@@ -8,11 +8,14 @@ import java.util.Objects;
 public class UserDto {
     private String username;
 
+    private Long telegramChatId;
+
     public UserDto() {
     }
 
-    public UserDto(String username) {
+    public UserDto(String username, Long telegramChatId) {
         this.username = username;
+        this.telegramChatId = telegramChatId;
     }
 
     public String getUsername() {
@@ -23,6 +26,14 @@ public class UserDto {
         this.username = username;
     }
 
+    public Long getTelegramChatId() {
+        return telegramChatId;
+    }
+
+    public void setTelegramChatId(Long telegramChatId) {
+        this.telegramChatId = telegramChatId;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -30,11 +41,14 @@ public class UserDto {
 
         UserDto userDto = (UserDto) o;
 
-        return Objects.equals(username, userDto.username);
+        if (!Objects.equals(username, userDto.username)) return false;
+        return Objects.equals(telegramChatId, userDto.telegramChatId);
     }
 
     @Override
     public int hashCode() {
-        return username != null ? username.hashCode() : 0;
+        int result = username != null ? username.hashCode() : 0;
+        result = 31 * result + (telegramChatId != null ? telegramChatId.hashCode() : 0);
+        return result;
     }
 }
