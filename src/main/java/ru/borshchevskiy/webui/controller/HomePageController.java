@@ -19,9 +19,8 @@ public class HomePageController {
     }
 
     @GetMapping
-    public String getMainPage(HttpSession session, Model model) {
-        String accessToken = (String) session.getAttribute("accessToken");
-        UserDto user = restApiClientService.getUser(accessToken);
+    public String getMainPage(Model model) {
+        UserDto user = restApiClientService.getUser();
         model.addAttribute("username", user.getUsername());
         model.addAttribute("isLoggedIn", true);
         return "index";
