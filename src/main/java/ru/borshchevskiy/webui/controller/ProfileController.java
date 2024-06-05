@@ -11,7 +11,6 @@ import ru.borshchevskiy.webui.dto.subscription.SubscriptionDto;
 import ru.borshchevskiy.webui.dto.user.UserDto;
 import ru.borshchevskiy.webui.dto.validation.groups.OnUpdate;
 import ru.borshchevskiy.webui.exception.restapi.RestApiClientErrorException;
-import ru.borshchevskiy.webui.exception.restapi.RestApiRequestBuildException;
 import ru.borshchevskiy.webui.service.RestApiClientService;
 
 import java.util.List;
@@ -83,14 +82,6 @@ public class ProfileController {
             return "redirect:/profile";
         }
         restApiClientService.removeSubscription(query.getQuery());
-        return "redirect:/profile";
-    }
-
-    @ExceptionHandler(RestApiRequestBuildException.class)
-    public String RestApiRequestBuildException(RestApiRequestBuildException exception,
-                                               RedirectAttributes redirectAttributes) {
-        List<String> errors = exception.getMessages();
-        redirectAttributes.addFlashAttribute("errorMessages", errors);
         return "redirect:/profile";
     }
 

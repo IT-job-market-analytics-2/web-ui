@@ -16,9 +16,8 @@ import ru.borshchevskiy.webui.dto.error.ErrorResponseDto;
 import ru.borshchevskiy.webui.dto.error.Violation;
 import ru.borshchevskiy.webui.dto.subscription.SubscriptionDto;
 import ru.borshchevskiy.webui.dto.user.UserDto;
-import ru.borshchevskiy.webui.exception.ResponseReadException;
+import ru.borshchevskiy.webui.exception.restapi.RestApiResponseReadException;
 import ru.borshchevskiy.webui.exception.restapi.RestApiClientErrorException;
-import ru.borshchevskiy.webui.exception.restapi.RestApiException;
 import ru.borshchevskiy.webui.exception.restapi.RestApiServerErrorException;
 import ru.borshchevskiy.webui.exception.restapi.RestApiUnauthorizedException;
 
@@ -159,7 +158,7 @@ public class RestApiClientService {
                 errorMessages.add(DEFAULT_ERROR_MESSAGE);
             }
         } catch (IOException e) {
-            throw new ResponseReadException("Failed to read response body.", e);
+            throw new RestApiResponseReadException("Failed to read response body.", e);
         }
         if (statusCode.is5xxServerError()) {
             throw new RestApiServerErrorException("Service unavailable. Received http status " + statusCode);

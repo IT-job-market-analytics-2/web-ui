@@ -16,7 +16,7 @@ import ru.borshchevskiy.webui.dto.auth.SignInDto;
 import ru.borshchevskiy.webui.dto.auth.SignInResponseDto;
 import ru.borshchevskiy.webui.dto.auth.SignUpDto;
 import ru.borshchevskiy.webui.dto.user.UserDto;
-import ru.borshchevskiy.webui.exception.ResponseReadException;
+import ru.borshchevskiy.webui.exception.restapi.RestApiResponseReadException;
 import ru.borshchevskiy.webui.exception.restapi.RestApiException;
 import ru.borshchevskiy.webui.exception.restapi.RestApiUnauthorizedException;
 
@@ -216,7 +216,7 @@ class RestApiClientServiceTest {
                     .andExpect(content().bytes(objectMapper.writeValueAsBytes(signInDto)))
                     .andRespond(withBadRequest());
 
-            assertThrows(ResponseReadException.class, () -> restApiClientService.signIn(signInDto));
+            assertThrows(RestApiResponseReadException.class, () -> restApiClientService.signIn(signInDto));
         }
 
         @Test
