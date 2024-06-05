@@ -14,13 +14,14 @@
         <div class="profile__form">
             <h1 class="text-center">Your profile</h1>
 
-            <form method="post" th:action="@{/profile/editUser}" th:object="${user}">
+            <form method="post" th:action="@{/profile/update}" th:object="${user}">
                 <div class="col-sm-4 m-auto text-center">
-                    <input type="text" class="form-control mb-3" th:value="*{username}" disabled>
-                    <input type="number" max="9223372036854775807" class="form-control mb-3"
+                    <input name="username" type="text" class="form-control mb-3" th:value="*{username}" disabled>
+                    <input name="telegramChatId" type="number" max="9223372036854775807" class="form-control mb-3"
                            placeholder="Telegram chat id" th:value="*{telegramChatId}">
-                    <div th:if="${updateMessage}" th:text="${updateMessage}"
-                         th:class="${'alert p-1 ps-2 mt-1 ' + updateAlertClass}"/>
+                    <div class="alert p-1 ps-2 mt-1 alert-danger" th:if="${updateErrorMessages}">
+                        <p class="mb-0" th:each="message : ${updateErrorMessages}" th:text="${message}">Error message</p>
+                    </div>
                     <div class="mb-4">
                         <i>
                             To receive Telegram notifications about new vacancies,
@@ -64,7 +65,7 @@
                     <span th:text="${subscription.query}"></span>
                     <form method="post" th:action="@{/profile/removeSubscription}" th:object="${updateSubscription}">
                         <input type="hidden" th:value="*{query}" name="query"/>
-                        <button class="btn btn-outline-danger" type="submit">-</button>
+                        <button class="btn btn-outline-danger" type="submit">X</button>
                     </form>
                 </div>
                 <div th:if="${removeMessage}" th:text="${removeMessage}"
