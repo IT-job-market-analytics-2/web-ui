@@ -1,6 +1,5 @@
 package ru.borshchevskiy.webui.controller;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import org.springframework.context.support.DefaultMessageSourceResolvable;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -11,6 +10,8 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import ru.borshchevskiy.webui.dto.subscription.SubscriptionDto;
 import ru.borshchevskiy.webui.dto.user.UserDto;
 import ru.borshchevskiy.webui.dto.validation.groups.OnUpdate;
+import ru.borshchevskiy.webui.exception.restapi.RestApiClientErrorException;
+import ru.borshchevskiy.webui.exception.restapi.RestApiRequestBuildException;
 import ru.borshchevskiy.webui.service.RestApiClientService;
 
 import java.util.List;
@@ -42,8 +43,7 @@ public class ProfileController {
     @PostMapping("/update")
     public String updateProfile(@ModelAttribute @Validated(OnUpdate.class) UserDto user,
                                 BindingResult bindingResult,
-                                RedirectAttributes redirectAttributes,
-                                Model model) {
+                                RedirectAttributes redirectAttributes) {
         if (bindingResult.hasErrors()) {
             List<String> errorMessages = bindingResult.getAllErrors().stream()
                     .map(DefaultMessageSourceResolvable::getDefaultMessage)
@@ -51,8 +51,8 @@ public class ProfileController {
             redirectAttributes.addFlashAttribute("updateErrorMessages", errorMessages);
             return "redirect:/profile";
         }
-        UserDto updatedUser = restApiClientService.updateUser(user);
-        model.addAttribute("user", updatedUser);
+        restApiClientService.updateUser(user);
+        redirectAttributes.addFlashAttribute("isProfileUpdated", true);
         return "redirect:/profile";
     }
 
@@ -83,6 +83,22 @@ public class ProfileController {
             return "redirect:/profile";
         }
         restApiClientService.removeSubscription(query.getQuery());
+        return "redirect:/profile";
+    }
+
+    @ExceptionHandler(RestApiRequestBuildException.class)
+    public String RestApiRequestBuildException(RestApiRequestBuildException exception,
+                                               RedirectAttributes redirectAttributes) {
+        List<String> errors = exception.getMessages();
+        redirectAttributes.addFlashAttribute("errorMessages", errors);
+        return "redirect:/profile";
+    }
+
+    @ExceptionHandler(RestApiClientErrorException.class)
+    public String handleRestApiClientErrorException(RestApiClientErrorException exception,
+                                                    RedirectAttributes redirectAttributes) {
+        List<String> errors = exception.getMessages();
+        redirectAttributes.addFlashAttribute("errorMessages", errors);
         return "redirect:/profile";
     }
 }
