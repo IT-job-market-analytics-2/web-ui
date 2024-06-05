@@ -1,4 +1,4 @@
-package ru.borshchevskiy.filestorage.dto.validation.groups;
+package ru.borshchevskiy.webui.dto.validation.groups;
 
 /**
  * Interface-marker for validation on "create" request.

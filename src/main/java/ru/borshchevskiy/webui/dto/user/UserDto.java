@@ -1,13 +1,17 @@
 package ru.borshchevskiy.webui.dto.user;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import jakarta.validation.constraints.NotNull;
+import ru.borshchevskiy.webui.dto.validation.groups.OnUpdate;
 
 import java.util.Objects;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class UserDto {
+    @JsonInclude(JsonInclude.Include.NON_NULL)
     private String username;
-
+    @NotNull(message = "Chat id must not be null!", groups = {OnUpdate.class})
     private Long telegramChatId;
 
     public UserDto() {
@@ -50,5 +54,13 @@ public class UserDto {
         int result = username != null ? username.hashCode() : 0;
         result = 31 * result + (telegramChatId != null ? telegramChatId.hashCode() : 0);
         return result;
+    }
+
+    @Override
+    public String toString() {
+        return "UserDto{" +
+                "username='" + username + '\'' +
+                ", telegramChatId=" + telegramChatId +
+                '}';
     }
 }
