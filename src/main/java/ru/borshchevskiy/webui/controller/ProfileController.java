@@ -6,10 +6,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import ru.borshchevskiy.webui.dto.subscription.SubscriptionDto;
 import ru.borshchevskiy.webui.dto.user.UserDto;
@@ -38,7 +35,7 @@ public class ProfileController {
         availableSubscriptions.removeAll(currentSubscriptions);
         model.addAttribute("currentSubscriptions", currentSubscriptions);
         model.addAttribute("availableSubscriptions", availableSubscriptions);
-        model.addAttribute("updateSubscription", new SubscriptionDto());
+        model.addAttribute("subscription", new SubscriptionDto());
         return "profile";
     }
 
@@ -59,5 +56,33 @@ public class ProfileController {
         return "redirect:/profile";
     }
 
+    @PostMapping("/subscriptions/add")
+    public String addSubscription(@ModelAttribute @Validated(OnUpdate.class) SubscriptionDto query,
+                                  BindingResult bindingResult,
+                                  RedirectAttributes redirectAttributes) {
+        if (bindingResult.hasErrors()) {
+            List<String> errorMessages = bindingResult.getAllErrors().stream()
+                    .map(DefaultMessageSourceResolvable::getDefaultMessage)
+                    .toList();
+            redirectAttributes.addFlashAttribute("addSubscriptionErrorMessages", errorMessages);
+            return "redirect:/profile";
+        }
+        restApiClientService.addSubscription(query.getQuery());
+        return "redirect:/profile";
+    }
 
+    @PostMapping("/subscriptions/remove")
+    public String removeSubscription(@ModelAttribute @Validated(OnUpdate.class) SubscriptionDto query,
+                                     BindingResult bindingResult,
+                                     RedirectAttributes redirectAttributes) {
+        if (bindingResult.hasErrors()) {
+            List<String> errorMessages = bindingResult.getAllErrors().stream()
+                    .map(DefaultMessageSourceResolvable::getDefaultMessage)
+                    .toList();
+            redirectAttributes.addFlashAttribute("removeSubscriptionErrorMessages", errorMessages);
+            return "redirect:/profile";
+        }
+        restApiClientService.removeSubscription(query.getQuery());
+        return "redirect:/profile";
+    }
 }
