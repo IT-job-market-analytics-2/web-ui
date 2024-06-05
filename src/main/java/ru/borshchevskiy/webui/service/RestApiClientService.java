@@ -1,6 +1,5 @@
 package ru.borshchevskiy.webui.service;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.core.ParameterizedTypeReference;
@@ -18,8 +17,9 @@ import ru.borshchevskiy.webui.dto.error.Violation;
 import ru.borshchevskiy.webui.dto.subscription.SubscriptionDto;
 import ru.borshchevskiy.webui.dto.user.UserDto;
 import ru.borshchevskiy.webui.exception.ResponseReadException;
+import ru.borshchevskiy.webui.exception.restapi.RestApiClientErrorException;
 import ru.borshchevskiy.webui.exception.restapi.RestApiException;
-import ru.borshchevskiy.webui.exception.restapi.RestApiRequestBuildException;
+import ru.borshchevskiy.webui.exception.restapi.RestApiServerErrorException;
 import ru.borshchevskiy.webui.exception.restapi.RestApiUnauthorizedException;
 
 import java.io.IOException;
@@ -83,21 +83,17 @@ public class RestApiClientService {
     }
 
     public UserDto updateUser(UserDto user) {
-        try {
-            UserDto response = restClient.put()
-                    .uri(restApiUriProvider.getUpdateUserUri())
-                    .headers(headers -> {
-                        headers.setContentType(APPLICATION_JSON);
-                        headers.setBearerAuth(getToken());
-                    })
-                    .body(objectMapper.writeValueAsString(user))
-                    .retrieve()
-                    .onStatus(HttpStatusCode::isError, this::handleError)
-                    .body(UserDto.class);
-            return response;
-        } catch (JsonProcessingException e) {
-            throw new RestApiRequestBuildException("Failed to build REST API request with body " + user.toString(), e);
-        }
+        UserDto response = restClient.put()
+                .uri(restApiUriProvider.getUpdateUserUri())
+                .headers(headers -> {
+                    headers.setContentType(APPLICATION_JSON);
+                    headers.setBearerAuth(getToken());
+                })
+                .body(user)
+                .retrieve()
+                .onStatus(HttpStatusCode::isError, this::handleError)
+                .body(UserDto.class);
+        return response;
     }
 
     public List<SubscriptionDto> getCurrentSubscriptions() {
@@ -126,6 +122,32 @@ public class RestApiClientService {
                 });
     }
 
+    public List<SubscriptionDto> addSubscription(String subscription) {
+        return restClient.post()
+                .uri(restApiUriProvider.getAddSubscriptionUri(subscription))
+                .headers(headers -> {
+                    headers.setContentType(APPLICATION_JSON);
+                    headers.setBearerAuth(getToken());
+                })
+                .retrieve()
+                .onStatus(HttpStatusCode::isError, this::handleError)
+                .body(new ParameterizedTypeReference<>() {
+                });
+    }
+
+    public List<SubscriptionDto> removeSubscription(String subscription) {
+        return restClient.delete()
+                .uri(restApiUriProvider.getRemoveSubscriptionUri(subscription))
+                .headers(headers -> {
+                    headers.setContentType(APPLICATION_JSON);
+                    headers.setBearerAuth(getToken());
+                })
+                .retrieve()
+                .onStatus(HttpStatusCode::isError, this::handleError)
+                .body(new ParameterizedTypeReference<>() {
+                });
+    }
+
     private void handleError(HttpRequest request, ClientHttpResponse response) {
         List<String> errorMessages = new ArrayList<>();
         HttpStatusCode statusCode;
@@ -140,12 +162,12 @@ public class RestApiClientService {
             throw new ResponseReadException("Failed to read response body.", e);
         }
         if (statusCode.is5xxServerError()) {
-            throw new RestApiException("Service unavailable. Received http status " + statusCode);
+            throw new RestApiServerErrorException("Service unavailable. Received http status " + statusCode);
         }
         if (statusCode.value() == HttpStatus.UNAUTHORIZED.value()) {
             throw new RestApiUnauthorizedException(errorMessages);
         }
-        throw new RestApiException(errorMessages);
+        throw new RestApiClientErrorException(errorMessages);
     }
 
     private List<String> parseErrorMessages(ErrorResponseDto errorResponseDto) {
