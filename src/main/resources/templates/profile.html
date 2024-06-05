@@ -23,6 +23,9 @@
                         <p class="m-auto" th:each="message : ${updateErrorMessages}" th:text="${message}">Error
                             message</p>
                     </div>
+                    <div class="alert p-1 mt-2 alert-success" th:if="${isProfileUpdated}">
+                        <p class="m-auto">Profile updated!</p>
+                    </div>
                     <div class="mb-4">
                         <i>
                             To receive Telegram notifications about new vacancies,
