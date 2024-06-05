@@ -8,6 +8,7 @@ rest-api:
       sign-in: "/auth/login"
     users:
       user: "/users/getUserInfo"
+      update: "/users"
     subscriptions:
       available: "/subscriptions/allAvailable"
       current: "/subscriptions"

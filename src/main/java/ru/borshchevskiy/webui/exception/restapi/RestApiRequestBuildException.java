@@ -2,31 +2,31 @@ package ru.borshchevskiy.webui.exception.restapi;
 
 import java.util.List;
 
-public class RestApiUnauthorizedException extends RestApiException{
-    public RestApiUnauthorizedException() {
+public class RestApiRequestBuildException extends RestApiException{
+    public RestApiRequestBuildException() {
     }
 
-    public RestApiUnauthorizedException(String message) {
+    public RestApiRequestBuildException(String message) {
         super(message);
     }
 
-    public RestApiUnauthorizedException(List<String> messages) {
+    public RestApiRequestBuildException(List<String> messages) {
         super(messages);
     }
 
-    public RestApiUnauthorizedException(String message, Throwable cause) {
+    public RestApiRequestBuildException(String message, Throwable cause) {
         super(message, cause);
     }
 
-    public RestApiUnauthorizedException(List<String> messages, Throwable cause) {
+    public RestApiRequestBuildException(List<String> messages, Throwable cause) {
         super(messages, cause);
     }
 
-    public RestApiUnauthorizedException(Throwable cause) {
+    public RestApiRequestBuildException(Throwable cause) {
         super(cause);
     }
 
-    public RestApiUnauthorizedException(String message, Throwable cause, boolean enableSuppression, boolean writableStackTrace) {
+    public RestApiRequestBuildException(String message, Throwable cause, boolean enableSuppression, boolean writableStackTrace) {
         super(message, cause, enableSuppression, writableStackTrace);
     }
 }

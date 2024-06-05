@@ -1,5 +1,6 @@
 package ru.borshchevskiy.webui.service;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.core.ParameterizedTypeReference;
@@ -18,6 +19,7 @@ import ru.borshchevskiy.webui.dto.subscription.SubscriptionDto;
 import ru.borshchevskiy.webui.dto.user.UserDto;
 import ru.borshchevskiy.webui.exception.ResponseReadException;
 import ru.borshchevskiy.webui.exception.restapi.RestApiException;
+import ru.borshchevskiy.webui.exception.restapi.RestApiRequestBuildException;
 import ru.borshchevskiy.webui.exception.restapi.RestApiUnauthorizedException;
 
 import java.io.IOException;
@@ -78,6 +80,24 @@ public class RestApiClientService {
                 .onStatus(HttpStatusCode::isError, this::handleError)
                 .body(UserDto.class);
         return response;
+    }
+
+    public UserDto updateUser(UserDto user) {
+        try {
+            UserDto response = restClient.put()
+                    .uri(restApiUriProvider.getUpdateUserUri())
+                    .headers(headers -> {
+                        headers.setContentType(APPLICATION_JSON);
+                        headers.setBearerAuth(getToken());
+                    })
+                    .body(objectMapper.writeValueAsString(user))
+                    .retrieve()
+                    .onStatus(HttpStatusCode::isError, this::handleError)
+                    .body(UserDto.class);
+            return response;
+        } catch (JsonProcessingException e) {
+            throw new RestApiRequestBuildException("Failed to build REST API request with body " + user.toString(), e);
+        }
     }
 
     public List<SubscriptionDto> getCurrentSubscriptions() {

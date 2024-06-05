@@ -14,12 +14,14 @@ public class RestApiUriProvider {
     private String restApiPort;
     @Value("${rest-api.host}")
     private String restApiHost;
-    @Value("${rest-api.endpoints.auth.sign-up:/auth/signup}")
+    @Value("${rest-api.endpoints.auth.sign-up:/auth/registration}")
     private String signUpEndpoint;
-    @Value("${rest-api.endpoints.auth.sign-in:/auth/signin}")
+    @Value("${rest-api.endpoints.auth.sign-in:/auth/login}")
     private String signInEndpoint;
     @Value("${rest-api.endpoints.users.user:/users/getUserInfo}")
     private String userEndpoint;
+    @Value("${rest-api.endpoints.users.update:/users}")
+    private String updateUserEndpoint;
     @Value("${rest-api.endpoints.subscriptions.current:/subscriptions}")
     private String currentSubscriptions;
     @Value("${rest-api.endpoints.subscriptions.available:/subscriptions/allAvailable}")
@@ -28,6 +30,7 @@ public class RestApiUriProvider {
     private String signUpUri;
     private String signInUri;
     private String userUri;
+    private String updateUserUri;
     private String currentSubscriptionsUri;
     private String availableSubscriptionsUri;
 
@@ -42,6 +45,7 @@ public class RestApiUriProvider {
         this.signUpUri = buildUriFromRoot(signUpEndpoint);
         this.signInUri = buildUriFromRoot(signInEndpoint);
         this.userUri = buildUriFromRoot(userEndpoint);
+        this.updateUserUri = buildUriFromRoot(updateUserEndpoint);
         this.currentSubscriptionsUri = buildUriFromRoot(currentSubscriptions);
         this.availableSubscriptionsUri = buildUriFromRoot(availableSubscriptions);
     }
@@ -63,6 +67,10 @@ public class RestApiUriProvider {
 
     public String getUserUri() {
         return userUri;
+    }
+
+    public String getUpdateUserUri() {
+        return updateUserUri;
     }
 
     public String getCurrentSubscriptionsUri() {

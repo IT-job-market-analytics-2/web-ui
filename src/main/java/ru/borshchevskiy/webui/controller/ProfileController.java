@@ -1,12 +1,19 @@
 package ru.borshchevskiy.webui.controller;
 
-import jakarta.servlet.http.HttpSession;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import org.springframework.context.support.DefaultMessageSourceResolvable;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import ru.borshchevskiy.webui.dto.subscription.SubscriptionDto;
 import ru.borshchevskiy.webui.dto.user.UserDto;
+import ru.borshchevskiy.webui.dto.validation.groups.OnUpdate;
 import ru.borshchevskiy.webui.service.RestApiClientService;
 
 import java.util.List;
@@ -34,4 +41,23 @@ public class ProfileController {
         model.addAttribute("updateSubscription", new SubscriptionDto());
         return "profile";
     }
+
+    @PostMapping("/update")
+    public String updateProfile(@ModelAttribute @Validated(OnUpdate.class) UserDto user,
+                                BindingResult bindingResult,
+                                RedirectAttributes redirectAttributes,
+                                Model model) {
+        if (bindingResult.hasErrors()) {
+            List<String> errorMessages = bindingResult.getAllErrors().stream()
+                    .map(DefaultMessageSourceResolvable::getDefaultMessage)
+                    .toList();
+            redirectAttributes.addFlashAttribute("updateErrorMessages", errorMessages);
+            return "redirect:/profile";
+        }
+        UserDto updatedUser = restApiClientService.updateUser(user);
+        model.addAttribute("user", updatedUser);
+        return "redirect:/profile";
+    }
+
+
 }
