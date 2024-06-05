@@ -26,6 +26,10 @@ public class RestApiUriProvider {
     private String currentSubscriptions;
     @Value("${rest-api.endpoints.subscriptions.available:/subscriptions/allAvailable}")
     private String availableSubscriptions;
+    @Value("${rest-api.endpoints.subscriptions.add:/subscriptions}")
+    private String addSubscription;
+    @Value("${rest-api.endpoints.subscriptions.remove:/subscriptions}")
+    private String removeSubscription;
     private String rootUri;
     private String signUpUri;
     private String signInUri;
@@ -33,6 +37,8 @@ public class RestApiUriProvider {
     private String updateUserUri;
     private String currentSubscriptionsUri;
     private String availableSubscriptionsUri;
+    private String addSubscriptionUri;
+    private String removeSubscriptionUri;
 
     @PostConstruct
     private void init() {
@@ -48,11 +54,20 @@ public class RestApiUriProvider {
         this.updateUserUri = buildUriFromRoot(updateUserEndpoint);
         this.currentSubscriptionsUri = buildUriFromRoot(currentSubscriptions);
         this.availableSubscriptionsUri = buildUriFromRoot(availableSubscriptions);
+        this.addSubscriptionUri = buildUriFromRoot(addSubscription);
+        this.removeSubscriptionUri = buildUriFromRoot(removeSubscription);
     }
 
     private String buildUriFromRoot(String path) {
         return UriComponentsBuilder.fromUriString(rootUri)
                 .path(path)
+                .build()
+                .toUriString();
+    }
+
+    private String addPathSegment(String uri, String path) {
+        return UriComponentsBuilder.fromUriString(uri)
+                .pathSegment(path)
                 .build()
                 .toUriString();
     }
@@ -79,5 +94,13 @@ public class RestApiUriProvider {
 
     public String getAvailableSubscriptionsUri() {
         return availableSubscriptionsUri;
+    }
+
+    public String getAddSubscriptionUri(String subscription) {
+        return addPathSegment(addSubscriptionUri, subscription);
+    }
+
+    public String getRemoveSubscriptionUri(String subscription) {
+        return addPathSegment(removeSubscriptionUri, subscription);
     }
 }

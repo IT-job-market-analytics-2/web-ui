@@ -12,3 +12,5 @@ rest-api:
     subscriptions:
       available: "/subscriptions/allAvailable"
       current: "/subscriptions"
+      add: "/subscriptions"
+      remove: "/subscriptions"
