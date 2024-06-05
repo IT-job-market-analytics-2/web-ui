@@ -14,8 +14,8 @@
     <div class="col-sm-4 m-auto">
       <input type="text" class="form-control mb-3" placeholder="Username" th:field="*{username}">
       <input type="password" class="form-control mb-3" placeholder="Password" th:field="*{password}">
-      <div class="alert alert-danger small p-2" role="alert" th:if="${errorMessages}">
-        <p th:each="error : ${errorMessages}" th:text="${error}"></p></div>
+      <div class="alert alert-danger small p-2 text-center" role="alert" th:if="${errorMessages}">
+        <p class="m-auto" th:each="error : ${errorMessages}" th:text="${error}"></p></div>
       <div class="text-center">
         <button type="submit" class="btn btn-primary">Sign In</button>
       </div>
