@@ -14,6 +14,8 @@ import ru.borshchevskiy.webui.dto.user.UserDto;
 import ru.borshchevskiy.webui.exception.restapi.RestApiException;
 import ru.borshchevskiy.webui.service.RestApiClientService;
 
+import java.util.List;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.mockito.AdditionalMatchers.not;
@@ -80,6 +82,7 @@ class SignInControllerTest {
         String badPasswordMessage = "Bad password message";
         String accessToken = "accessToken";
         String refreshToken = "refreshToken";
+        List<String> badUsernameMessages = List.of(badPasswordMessage);
 
         SignInDto signInDto = new SignInDto(testUsername, testPassword);
 
@@ -92,7 +95,7 @@ class SignInControllerTest {
         redirectDto.setUsername(testUsername);
 
         doReturn(signInResponseDto).when(restApiClientService).signIn(eq(signInDto));
-        doThrow(new RestApiException(badPasswordMessage)).when(restApiClientService).signIn(not(eq(signInDto)));
+        doThrow(new RestApiException(badUsernameMessages)).when(restApiClientService).signIn(not(eq(signInDto)));
 
         HttpSession session = mockMvc.perform(post("/sign-in")
                         .param("username", testUsername)
@@ -100,7 +103,7 @@ class SignInControllerTest {
                 .andExpectAll(
                         redirectedUrl("/sign-in"),
                         flash().attribute("user", redirectDto),
-                        flash().attribute("errorMessage", badPasswordMessage)
+                        flash().attribute("errorMessages", badUsernameMessages)
                 )
                 .andReturn()
                 .getRequest()
