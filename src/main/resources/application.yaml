@@ -1,9 +1,16 @@
 rest-api:
   host: ""
   port:
+  scheme: "http"
   endpoints:
     auth:
-      sign-up: "/auth/signup"
-      sign-in: "/auth/signin"
-    user:
-      user: "/user"
+      sign-up: "/auth/registration"
+      sign-in: "/auth/login"
+    users:
+      user: "/users/getUserInfo"
+      update: "/users"
+    subscriptions:
+      available: "/subscriptions/allAvailable"
+      current: "/subscriptions"
+      add: "/subscriptions"
+      remove: "/subscriptions"

@@ -4,25 +4,32 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>User profile</title>
-    <link href="/css/bootstrap.min.css" rel="stylesheet" type="text/css" >
-    <link href="/css/styles.css" rel="stylesheet" type="text/css" >
+    <link href="/css/bootstrap.min.css" rel="stylesheet" type="text/css">
+    <link href="/css/styles.css" rel="stylesheet" type="text/css">
 </head>
 <body>
-<header th:replace="~{fragment/header :: header (isLoggedIn=${isLoggedIn}, username=${username})}"></header>
+<header th:replace="~{fragment/header :: header (isLoggedIn=${isLoggedIn}, username=${user.username})}"></header>
 <section class="wrapper profile">
     <div class="container">
         <div class="profile__form">
             <h1 class="text-center">Your profile</h1>
 
-            <form method="post" th:action="@{/profile/editUser}" th:object="${updateUser}">
+            <form method="post" th:action="@{/profile/update}" th:object="${user}">
                 <div class="col-sm-4 m-auto text-center">
-                    <input type="text" class="form-control mb-3" th:value="${username}" disabled>
-                    <input type="number" th:value="${telegramChatId}" max="9223372036854775807" class="form-control mb-3" placeholder="Telegram chat id" th:field="*{telegramChatId}">
-                    <div th:if="${updateMessage}" th:text="${updateMessage}" th:class="${'alert p-1 ps-2 mt-1 ' + updateAlertClass}"/>
+                    <input name="username" type="text" class="form-control mb-3" th:value="*{username}" disabled>
+                    <input name="telegramChatId" type="number" max="9223372036854775807" class="form-control mb-3"
+                           placeholder="Telegram chat id" th:value="*{telegramChatId}">
+                    <div class="alert p-1 mt-2 alert-danger" th:if="${updateErrorMessages}">
+                        <p class="m-auto" th:each="message : ${updateErrorMessages}" th:text="${message}">Error
+                            message</p>
+                    </div>
+                    <div class="alert p-1 mt-2 alert-success" th:if="${isProfileUpdated}">
+                        <p class="m-auto">Profile updated!</p>
+                    </div>
                     <div class="mb-4">
                         <i>
                             To receive Telegram notifications about new vacancies,
-                            contact <a href="https://t.me/it_jobs_notifier_bot">@it_jobs_notifier_bot</a>
+                            contact <a href="https://t.me/it_jobs_notifiers_bot">@it_jobs_notifiers_bot</a>
                             and paste your chat id here
                         </i>
                     </div>
@@ -31,24 +38,26 @@
             </form>
         </div>
         <div class="subscriptions__form">
-            <h1 class="text-center ">You subscriptions</h1>
-            <form method="post" th:action="@{/profile/addSubscription}" th:object="${addSubscription}" class="mt-4">
+            <h1 class="text-center ">Your subscriptions</h1>
+            <form method="post" th:action="@{/profile/subscriptions/add}" th:object="${subscription}" class="mt-4">
                 <div class="m-auto col-sm-4">
-                    <div class="row">
-                        <div class="col-sm-4 d-flex w-100">
-                            <div class="flex-grow-1">
-                                <select class="form-select flex-grow-1" th:field="*{query}">
-                                    <option value="" hidden="hidden">Choose a keyword to subscribe</option>
-                                    <option th:each="subscription: ${availableSubscriptions}"
-                                            th:value="${subscription.query}"
-                                            th:text="${subscription.query}"></option>
-                                </select>
-                                <div th:if="${addMessage}" th:text="${addMessage}" th:class="${'alert p-1 ps-2 mt-1 ' + addAlertClass}"/>
-                            </div>
-                            <div class="text-center mx-4">
-                                <button class="btn btn-outline-primary" type="submit">Subscribe</button>
-                            </div>
+                    <div class="col-sm-4 d-flex w-100">
+                        <div class="flex-grow-1">
+                            <select class="form-select flex-grow-1" th:field="*{query}">
+                                <option value="" hidden="hidden">Choose a keyword to subscribe</option>
+                                <option th:each="availableSubscription : ${availableSubscriptions}"
+                                        th:value="${availableSubscription.query}"
+                                        th:text="${availableSubscription.query}"></option>
+                            </select>
+
                         </div>
+                        <div class="text-center ms-4">
+                            <button class="btn btn-outline-primary" type="submit">Subscribe</button>
+                        </div>
+                    </div>
+                    <div class="alert p-1 mt-2 alert-danger text-center" th:if="${addSubscriptionErrorMessages}">
+                        <p class="m-auto" th:each="message : ${addSubscriptionErrorMessages}"
+                           th:text="${message}">Error message</p>
                     </div>
                 </div>
             </form>
@@ -56,14 +65,18 @@
 
         <div class="subscribers mt-4 row">
             <div class="m-auto col-sm-3">
-                <div th:each="subscription: ${currentSubscriptions}" class="d-flex align-items-center justify-content-between mt-2">
-                    <span th:text="${subscription.query}"></span>
-                    <form method="post" th:action="@{/profile/removeSubscription}" th:object="${removeSubscription}">
-                        <input type="hidden" th:value="${subscription.query}" name="query"/>
-                        <button class="btn btn-outline-danger" type="submit">-</button>
+                <div th:each="currentSubscription: ${currentSubscriptions}"
+                     class="d-flex align-items-center justify-content-between mt-2">
+                    <span th:text="${currentSubscription.query}"></span>
+                    <form method="post" th:action="@{/profile/subscriptions/remove}" th:object="${currentSubscription}">
+                        <input type="hidden" th:value="*{query}" name="query"/>
+                        <button class="btn btn-outline-danger" type="submit">X</button>
                     </form>
                 </div>
-                <div th:if="${removeMessage}" th:text="${removeMessage}" th:class="${'alert p-1 ps-2 mt-2 ' + removeAlertClass}"/>
+                <div class="alert p-1 mt-2 alert-danger text-center" th:if="${removeSubscriptionErrorMessages}">
+                    <p class="m-auto" th:each="message : ${removeSubscriptionErrorMessages}"
+                       th:text="${message}">Error message</p>
+                </div>
             </div>
         </div>
     </div>

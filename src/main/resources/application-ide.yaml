@@ -1,0 +1,6 @@
+server:
+  port: 8081
+rest-api:
+  host: "localhost"
+  port: "8080"
+  scheme: "http"

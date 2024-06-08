@@ -1,5 +1,7 @@
 package ru.borshchevskiy.webui.exception.restapi;
 
+import java.util.List;
+
 public class RestApiUnauthorizedException extends RestApiException{
     public RestApiUnauthorizedException() {
     }
@@ -8,8 +10,16 @@ public class RestApiUnauthorizedException extends RestApiException{
         super(message);
     }
 
+    public RestApiUnauthorizedException(List<String> messages) {
+        super(messages);
+    }
+
     public RestApiUnauthorizedException(String message, Throwable cause) {
         super(message, cause);
+    }
+
+    public RestApiUnauthorizedException(List<String> messages, Throwable cause) {
+        super(messages, cause);
     }
 
     public RestApiUnauthorizedException(Throwable cause) {
