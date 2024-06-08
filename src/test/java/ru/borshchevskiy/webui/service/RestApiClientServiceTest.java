@@ -2,6 +2,7 @@ package ru.borshchevskiy.webui.service;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import jakarta.servlet.http.HttpSession;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -15,9 +16,10 @@ import org.springframework.test.web.client.MockRestServiceServer;
 import ru.borshchevskiy.webui.dto.auth.SignInDto;
 import ru.borshchevskiy.webui.dto.auth.SignInResponseDto;
 import ru.borshchevskiy.webui.dto.auth.SignUpDto;
+import ru.borshchevskiy.webui.dto.error.ErrorResponseDto;
 import ru.borshchevskiy.webui.dto.user.UserDto;
-import ru.borshchevskiy.webui.exception.ResponseReadException;
 import ru.borshchevskiy.webui.exception.restapi.RestApiException;
+import ru.borshchevskiy.webui.exception.restapi.RestApiResponseReadException;
 import ru.borshchevskiy.webui.exception.restapi.RestApiUnauthorizedException;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -37,6 +39,8 @@ class RestApiClientServiceTest {
     private ObjectMapper objectMapper;
     @MockBean
     private RestApiUriProvider restApiUriProvider;
+    @MockBean
+    private HttpSession httpSession;
 
     private final String signUpUri = "https://app.test.com/signup";
     private final String signInUri = "https://app.test.com/signin";
@@ -91,13 +95,15 @@ class RestApiClientServiceTest {
             String password = "password";
             signUpDto.setUsername(username);
             signUpDto.setPassword(password);
+            ErrorResponseDto error = new ErrorResponseDto();
+            error.setMessage("Unauthorized");
 
             doReturn(signUpUri).when(restApiUriProvider).getSignUpUri();
 
             mockServer.expect(requestTo(signUpUri))
                     .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                     .andExpect(content().bytes(objectMapper.writeValueAsBytes(signUpDto)))
-                    .andRespond(withUnauthorizedRequest().body(objectMapper.writeValueAsBytes("Unauthorized")));
+                    .andRespond(withUnauthorizedRequest().body(objectMapper.writeValueAsBytes(error)));
 
             assertThrows(RestApiUnauthorizedException.class, () -> restApiClientService.signUp(signUpDto));
         }
@@ -145,13 +151,16 @@ class RestApiClientServiceTest {
             signInDto.setUsername(username);
             signInDto.setPassword(password);
 
+            ErrorResponseDto error = new ErrorResponseDto();
+            error.setMessage("Unauthorized");
+
             doReturn(signInUri).when(restApiUriProvider).getSignInUri();
 
             mockServer.expect(requestTo(signInUri))
                     .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                     .andExpect(content().bytes(objectMapper.writeValueAsBytes(signInDto)))
                     .andRespond(withUnauthorizedRequest()
-                            .body(objectMapper.writeValueAsBytes("Unauthorized")));
+                            .body(objectMapper.writeValueAsBytes(error)));
 
             assertThrows(RestApiUnauthorizedException.class, () -> restApiClientService.signIn(signInDto));
         }
@@ -168,6 +177,7 @@ class RestApiClientServiceTest {
             UserDto userDto = new UserDto();
             userDto.setUsername(username);
 
+            doReturn(accessToken).when(httpSession).getAttribute(accessToken);
             doReturn(getUserUri).when(restApiUriProvider).getUserUri();
 
             mockServer.expect(requestTo(getUserUri))
@@ -177,23 +187,26 @@ class RestApiClientServiceTest {
                             .contentType(MediaType.APPLICATION_JSON)
                             .body(objectMapper.writeValueAsBytes(userDto)));
 
-            assertEquals(userDto, restApiClientService.getUser(accessToken));
+            assertEquals(userDto, restApiClientService.getUser());
         }
 
         @Test
         @DisplayName("Test getuser with bad credentials, receive unauthorized - RestApiUnauthorizedException is thrown")
         public void testGetUser_getUnauthorized() throws JsonProcessingException {
             String accessToken = "accessToken";
+            ErrorResponseDto error = new ErrorResponseDto();
+            error.setMessage("Unauthorized");
 
+            doReturn(accessToken).when(httpSession).getAttribute(accessToken);
             doReturn(getUserUri).when(restApiUriProvider).getUserUri();
 
             mockServer.expect(requestTo(getUserUri))
                     .andExpect(header("AUTHORIZATION", "Bearer " + accessToken))
                     .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                     .andRespond(withUnauthorizedRequest()
-                            .body(objectMapper.writeValueAsBytes("Unauthorized")));
+                            .body(objectMapper.writeValueAsBytes(error)));
 
-            assertThrows(RestApiUnauthorizedException.class, () -> restApiClientService.getUser(accessToken));
+            assertThrows(RestApiUnauthorizedException.class, () -> restApiClientService.getUser());
         }
     }
 
@@ -216,7 +229,7 @@ class RestApiClientServiceTest {
                     .andExpect(content().bytes(objectMapper.writeValueAsBytes(signInDto)))
                     .andRespond(withBadRequest());
 
-            assertThrows(ResponseReadException.class, () -> restApiClientService.signIn(signInDto));
+            assertThrows(RestApiResponseReadException.class, () -> restApiClientService.signIn(signInDto));
         }
 
         @Test

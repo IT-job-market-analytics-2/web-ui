@@ -12,6 +12,8 @@ import ru.borshchevskiy.webui.dto.user.UserDto;
 import ru.borshchevskiy.webui.exception.restapi.RestApiException;
 import ru.borshchevskiy.webui.service.RestApiClientService;
 
+import java.util.List;
+
 import static org.mockito.AdditionalMatchers.not;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doNothing;
@@ -61,20 +63,21 @@ class SignUpControllerTest {
 
         String badUsername = "badUsername";
         String badUsernameMessage = "Bad username message";
+        List<String> badUsernameMessages = List.of(badUsernameMessage);
 
-        UserDto redirectUserDto = new UserDto();
-        redirectUserDto.setUsername(badUsername);
+        SignUpDto redirectDto = new SignUpDto();
+        redirectDto.setUsername(badUsername);
 
         doNothing().when(restApiClientService).signUp(eq(signUpDto));
-        doThrow(new RestApiException(badUsernameMessage)).when(restApiClientService).signUp(not(eq(signUpDto)));
+        doThrow(new RestApiException(badUsernameMessages)).when(restApiClientService).signUp(not(eq(signUpDto)));
 
         mockMvc.perform(post("/sign-up")
                         .param("username", badUsername)
                         .param("password", testPassword))
                 .andExpectAll(
                         redirectedUrl("/sign-up"),
-                        flash().attribute("user", redirectUserDto),
-                        flash().attribute("errorMessage", badUsernameMessage)
+                        flash().attribute("user", redirectDto),
+                        flash().attribute("errorMessages", badUsernameMessages)
                 );
     }
 }

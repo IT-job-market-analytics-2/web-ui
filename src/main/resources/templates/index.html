@@ -10,7 +10,9 @@
 <body>
 <header th:replace="~{fragment/header :: header (isLoggedIn=${isLoggedIn}, username=${username})}"></header>
 <section class="wrapper">
-  <div class="alert alert-danger small p-2" role="alert" th:if="${errorMessage}"><span th:text="${errorMessage}"/></div>
+  <div class="alert alert-danger small p-2 text-center" role="alert" th:if="${errorMessages}">
+    <p class="mb-0" th:each="errorMessage : ${errorMessages}" th:text="${errorMessage}"></p>
+  </div>
   <div class="container mt-5 mb-lg-4">
     <div class="row">
       <div class="col-sm-12 col-md-6">

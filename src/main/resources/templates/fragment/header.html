@@ -3,7 +3,7 @@
         <div class="container">
             <a class="navbar-brand" href="/">IT jobs market analytics</a>
             <div th:if="${isLoggedIn}">
-                <a class="btn btn-outline" href="/user" th:inline="text">Hi, <b>[[${username}]]</b></a>
+                <a class="btn btn-outline" href="/profile" th:inline="text">Hi, <b>[[${username}]]</b></a>
                 <a class="btn btn-outline" href="/logout">Logout</a>
             </div>
             <div th:unless="${isLoggedIn}">

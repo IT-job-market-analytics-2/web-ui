@@ -1,8 +1,8 @@
 package ru.borshchevskiy.webui.service;
 
-import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.springframework.boot.convert.Delimiter;
+import jakarta.servlet.http.HttpSession;
+import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
@@ -14,17 +14,17 @@ import ru.borshchevskiy.webui.dto.auth.SignInResponseDto;
 import ru.borshchevskiy.webui.dto.auth.SignUpDto;
 import ru.borshchevskiy.webui.dto.error.ErrorResponseDto;
 import ru.borshchevskiy.webui.dto.error.Violation;
+import ru.borshchevskiy.webui.dto.subscription.SubscriptionDto;
 import ru.borshchevskiy.webui.dto.user.UserDto;
-import ru.borshchevskiy.webui.exception.ResponseReadException;
-import ru.borshchevskiy.webui.exception.restapi.RestApiException;
+import ru.borshchevskiy.webui.exception.restapi.RestApiResponseReadException;
+import ru.borshchevskiy.webui.exception.restapi.RestApiClientErrorException;
+import ru.borshchevskiy.webui.exception.restapi.RestApiServerErrorException;
 import ru.borshchevskiy.webui.exception.restapi.RestApiUnauthorizedException;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.StringJoiner;
-import java.util.stream.Collectors;
 
 import static org.springframework.http.MediaType.APPLICATION_JSON;
 
@@ -36,12 +36,16 @@ public class RestApiClientService {
     private final ObjectMapper objectMapper;
     private final RestApiUriProvider restApiUriProvider;
 
+    private final HttpSession session;
+
     public RestApiClientService(RestClient.Builder builder,
                                 ObjectMapper objectMapper,
-                                RestApiUriProvider restApiUriProvider) {
+                                RestApiUriProvider restApiUriProvider,
+                                HttpSession session) {
         this.restClient = builder.build();
         this.objectMapper = objectMapper;
         this.restApiUriProvider = restApiUriProvider;
+        this.session = session;
     }
 
     public void signUp(SignUpDto dto) {
@@ -64,17 +68,83 @@ public class RestApiClientService {
                 .body(SignInResponseDto.class);
     }
 
-    public UserDto getUser(String token) {
+    public UserDto getUser() {
         UserDto response = restClient.get()
                 .uri(restApiUriProvider.getUserUri())
                 .headers(headers -> {
                     headers.setContentType(APPLICATION_JSON);
-                    headers.setBearerAuth(token);
+                    headers.setBearerAuth(getToken());
                 })
                 .retrieve()
                 .onStatus(HttpStatusCode::isError, this::handleError)
                 .body(UserDto.class);
         return response;
+    }
+
+    public UserDto updateUser(UserDto user) {
+        UserDto response = restClient.put()
+                .uri(restApiUriProvider.getUpdateUserUri())
+                .headers(headers -> {
+                    headers.setContentType(APPLICATION_JSON);
+                    headers.setBearerAuth(getToken());
+                })
+                .body(user)
+                .retrieve()
+                .onStatus(HttpStatusCode::isError, this::handleError)
+                .body(UserDto.class);
+        return response;
+    }
+
+    public List<SubscriptionDto> getCurrentSubscriptions() {
+        return restClient.get()
+                .uri(restApiUriProvider.getCurrentSubscriptionsUri())
+                .headers(headers -> {
+                    headers.setContentType(APPLICATION_JSON);
+                    headers.setBearerAuth(getToken());
+                })
+                .retrieve()
+                .onStatus(HttpStatusCode::isError, this::handleError)
+                .body(new ParameterizedTypeReference<>() {
+                });
+    }
+
+    public List<SubscriptionDto> getaAvailableSubscriptions() {
+        return restClient.get()
+                .uri(restApiUriProvider.getAvailableSubscriptionsUri())
+                .headers(headers -> {
+                    headers.setContentType(APPLICATION_JSON);
+                    headers.setBearerAuth(getToken());
+                })
+                .retrieve()
+                .onStatus(HttpStatusCode::isError, this::handleError)
+                .body(new ParameterizedTypeReference<>() {
+                });
+    }
+
+    public List<SubscriptionDto> addSubscription(String subscription) {
+        return restClient.post()
+                .uri(restApiUriProvider.getAddSubscriptionUri(subscription))
+                .headers(headers -> {
+                    headers.setContentType(APPLICATION_JSON);
+                    headers.setBearerAuth(getToken());
+                })
+                .retrieve()
+                .onStatus(HttpStatusCode::isError, this::handleError)
+                .body(new ParameterizedTypeReference<>() {
+                });
+    }
+
+    public List<SubscriptionDto> removeSubscription(String subscription) {
+        return restClient.delete()
+                .uri(restApiUriProvider.getRemoveSubscriptionUri(subscription))
+                .headers(headers -> {
+                    headers.setContentType(APPLICATION_JSON);
+                    headers.setBearerAuth(getToken());
+                })
+                .retrieve()
+                .onStatus(HttpStatusCode::isError, this::handleError)
+                .body(new ParameterizedTypeReference<>() {
+                });
     }
 
     private void handleError(HttpRequest request, ClientHttpResponse response) {
@@ -88,15 +158,15 @@ public class RestApiClientService {
                 errorMessages.add(DEFAULT_ERROR_MESSAGE);
             }
         } catch (IOException e) {
-            throw new ResponseReadException("Failed to read response body.", e);
+            throw new RestApiResponseReadException("Failed to read response body.", e);
         }
         if (statusCode.is5xxServerError()) {
-            throw new RestApiException("Service unavailable. Received http status " + statusCode);
+            throw new RestApiServerErrorException("Service unavailable. Received http status " + statusCode);
         }
         if (statusCode.value() == HttpStatus.UNAUTHORIZED.value()) {
             throw new RestApiUnauthorizedException(errorMessages);
         }
-        throw new RestApiException(errorMessages);
+        throw new RestApiClientErrorException(errorMessages);
     }
 
     private List<String> parseErrorMessages(ErrorResponseDto errorResponseDto) {
@@ -112,5 +182,9 @@ public class RestApiClientService {
             errorMessages.addAll(collectedMessages);
         }
         return errorMessages;
+    }
+
+    private String getToken() {
+        return (String) this.session.getAttribute("accessToken");
     }
 }
