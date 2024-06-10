@@ -18,6 +18,8 @@ public class RestApiUriProvider {
     private String signUpEndpoint;
     @Value("${rest-api.endpoints.auth.sign-in:/auth/login}")
     private String signInEndpoint;
+    @Value("${rest-api.endpoints.auth.refresh:/auth/refresh}")
+    private String tokenRefreshEndpoint;
     @Value("${rest-api.endpoints.users.user:/users/getUserInfo}")
     private String userEndpoint;
     @Value("${rest-api.endpoints.users.update:/users}")
@@ -33,6 +35,7 @@ public class RestApiUriProvider {
     private String rootUri;
     private String signUpUri;
     private String signInUri;
+    private String tokenRefreshUri;
     private String userUri;
     private String updateUserUri;
     private String currentSubscriptionsUri;
@@ -50,6 +53,7 @@ public class RestApiUriProvider {
                 .toUriString();
         this.signUpUri = buildUriFromRoot(signUpEndpoint);
         this.signInUri = buildUriFromRoot(signInEndpoint);
+        this.tokenRefreshUri = buildUriFromRoot(tokenRefreshEndpoint);
         this.userUri = buildUriFromRoot(userEndpoint);
         this.updateUserUri = buildUriFromRoot(updateUserEndpoint);
         this.currentSubscriptionsUri = buildUriFromRoot(currentSubscriptions);
@@ -78,6 +82,9 @@ public class RestApiUriProvider {
 
     public String getSignInUri() {
         return signInUri;
+    }
+    public String getTokenRefreshUri() {
+        return tokenRefreshUri;
     }
 
     public String getUserUri() {
