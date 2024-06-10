@@ -2,10 +2,13 @@ rest-api:
   host: ""
   port:
   scheme: "http"
+  tokens:
+    refresh-wait-timeout: 5
   endpoints:
     auth:
       sign-up: "/auth/registration"
       sign-in: "/auth/login"
+      refresh: "/auth/refresh"
     users:
       user: "/users/getUserInfo"
       update: "/users"
