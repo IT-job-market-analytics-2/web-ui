@@ -17,3 +17,6 @@ rest-api:
       current: "/subscriptions"
       add: "/subscriptions"
       remove: "/subscriptions"
+    analytics:
+      by-query: "/analytics/history/{query}?depth={depth}"
+      recent: "/analytics/byQuery"
