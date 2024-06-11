@@ -11,6 +11,7 @@ import org.springframework.http.client.ClientHttpResponse;
 import org.springframework.retry.annotation.Retryable;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestClient;
+import ru.borshchevskiy.webui.dto.analytics.AnalyticsDto;
 import ru.borshchevskiy.webui.dto.auth.SignInDto;
 import ru.borshchevskiy.webui.dto.auth.SignInResponseDto;
 import ru.borshchevskiy.webui.dto.auth.SignUpDto;
@@ -156,6 +157,43 @@ public class RestApiClientService {
                 .onStatus(HttpStatusCode::isError, this::handleError)
                 .body(new ParameterizedTypeReference<>() {
                 });
+    }
+
+    public List<SubscriptionDto> getaAvailableQueries() {
+        return restClient.get()
+                .uri(restApiUriProvider.getAvailableSubscriptionsUri())
+                .headers(headers -> {
+                    headers.setContentType(APPLICATION_JSON);
+                    headers.setBearerAuth(getToken());
+                })
+                .retrieve()
+                .onStatus(HttpStatusCode::isError, this::handleError)
+                .body(new ParameterizedTypeReference<>() {});
+    }
+    public List<AnalyticsDto> getAnalyticsByQuery(String query) {
+        List<AnalyticsDto> body = restClient.get()
+                .uri(restApiUriProvider.getAnalyticsByQueryUri(), query, 30)
+                .headers(headers -> {
+                    headers.setContentType(APPLICATION_JSON);
+                    headers.setBearerAuth(getToken());
+                })
+                .retrieve()
+                .onStatus(HttpStatusCode::isError, this::handleError)
+                .body(new ParameterizedTypeReference<>() {});
+        return body;
+    }
+
+    public List<AnalyticsDto> getRecentAnalytics() {
+        List<AnalyticsDto> body = restClient.get()
+                .uri(restApiUriProvider.getRecentAnalyticsUri())
+                .headers(headers -> {
+                    headers.setContentType(APPLICATION_JSON);
+                    headers.setBearerAuth(getToken());
+                })
+                .retrieve()
+                .onStatus(HttpStatusCode::isError, this::handleError)
+                .body(new ParameterizedTypeReference<>() {});
+        return body;
     }
 
     private void handleError(HttpRequest request, ClientHttpResponse response) {

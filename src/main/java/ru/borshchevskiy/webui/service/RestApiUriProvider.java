@@ -25,13 +25,17 @@ public class RestApiUriProvider {
     @Value("${rest-api.endpoints.users.update:/users}")
     private String updateUserEndpoint;
     @Value("${rest-api.endpoints.subscriptions.current:/subscriptions}")
-    private String currentSubscriptions;
+    private String currentSubscriptionsEndpoint;
     @Value("${rest-api.endpoints.subscriptions.available:/subscriptions/allAvailable}")
-    private String availableSubscriptions;
+    private String availableSubscriptionsEndpoint;
     @Value("${rest-api.endpoints.subscriptions.add:/subscriptions}")
-    private String addSubscription;
+    private String addSubscriptionEndpoint;
     @Value("${rest-api.endpoints.subscriptions.remove:/subscriptions}")
-    private String removeSubscription;
+    private String removeSubscriptionEndpoint;
+    @Value("${rest-api.endpoints.analytics.by-query:/analytics/history/{query}?depth={depth}}")
+    private String analyticsByQueryEndpoint;
+    @Value("${rest-api.endpoints.analytics.recent:/analytics/byQuery}")
+    private String recentAnalyticsEndpoint;
     private String rootUri;
     private String signUpUri;
     private String signInUri;
@@ -42,6 +46,8 @@ public class RestApiUriProvider {
     private String availableSubscriptionsUri;
     private String addSubscriptionUri;
     private String removeSubscriptionUri;
+    private String analyticsByQueryUri;
+    private String recentAnalyticsUri;
 
     @PostConstruct
     private void init() {
@@ -56,10 +62,12 @@ public class RestApiUriProvider {
         this.tokenRefreshUri = buildUriFromRoot(tokenRefreshEndpoint);
         this.userUri = buildUriFromRoot(userEndpoint);
         this.updateUserUri = buildUriFromRoot(updateUserEndpoint);
-        this.currentSubscriptionsUri = buildUriFromRoot(currentSubscriptions);
-        this.availableSubscriptionsUri = buildUriFromRoot(availableSubscriptions);
-        this.addSubscriptionUri = buildUriFromRoot(addSubscription);
-        this.removeSubscriptionUri = buildUriFromRoot(removeSubscription);
+        this.currentSubscriptionsUri = buildUriFromRoot(currentSubscriptionsEndpoint);
+        this.availableSubscriptionsUri = buildUriFromRoot(availableSubscriptionsEndpoint);
+        this.addSubscriptionUri = buildUriFromRoot(addSubscriptionEndpoint);
+        this.removeSubscriptionUri = buildUriFromRoot(removeSubscriptionEndpoint);
+        this.analyticsByQueryUri = buildUriFromRoot(analyticsByQueryEndpoint);
+        this.recentAnalyticsUri = buildUriFromRoot(recentAnalyticsEndpoint);
     }
 
     private String buildUriFromRoot(String path) {
@@ -109,5 +117,12 @@ public class RestApiUriProvider {
 
     public String getRemoveSubscriptionUri(String subscription) {
         return addPathSegment(removeSubscriptionUri, subscription);
+    }
+    public String getAnalyticsByQueryUri() {
+        return analyticsByQueryUri;
+    }
+
+    public String getRecentAnalyticsUri() {
+        return recentAnalyticsUri;
     }
 }
