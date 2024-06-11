@@ -1,49 +1,78 @@
 document.addEventListener("DOMContentLoaded", function (event) {
+    let averageSalaryHistoryChartInstance;
+    let recentAverageSalaryChartInstance;
+    let numberOfVacanciesChartInstance;
 
-    const ctx = document.getElementById('numberOfVacancy');
-    new Chart(ctx, {
-        type: 'bar',
-        data: {
-            labels: queries,
-            datasets: [{
-                label: 'Number of vacancies',
-                data: vacancyCount,
-                borderWidth: 1
-            }]
-        },
-        options: {
-            scales: {
-                y: {
-                    beginAtZero: true
+    function getRecentAnalytics() {
+        const url = `/analytics/recent`;
+        const queries = [];
+        const vacancyCount = [];
+        const averageSalaryData = [];
+        fetch(url)
+            .then((response) => {
+                if (!response.ok) {
+                    throw new Error("Network response was not ok");
                 }
-            }
-        }
-    });
+                return response.json();
+            })
+            .then((data) => {
+                data.forEach((element) => {
+                    queries.push(element.query);
+                    vacancyCount.push(element.vacancyCount);
+                    averageSalaryData.push(element.averageSalary);
+                })
+                buildRecentAverageSalaryChart(queries, averageSalaryData);
+                buildnumberOfVacanciesChart(queries, vacancyCount);
+            })
+            .catch((error) => {
+                console.error("Error fetching data:", error);
+            });
+    }
 
-    const averageSalary = document.getElementById('averageSalary');
-    new Chart(averageSalary, {
-        type: 'bar',
-        data: {
-            labels: queries,
-            datasets: [{
-                label: 'Average Salary',
-                data: averageSalaryData,
-                borderWidth: 1,
-                backgroundColor: ['rgba(75, 192, 192, 0.2)']
-            }]
-        },
-        options: {
-            scales: {
-                y: {
-                    beginAtZero: true
+    function getAnalyticsHistory() {
+        const url = `/analytics/queries`;
+
+        fetch(url)
+            .then((response) => {
+                if (!response.ok) {
+                    throw new Error("Network response was not ok");
                 }
-            }
-        }
-    });
+                return response.json();
+            })
+            .then((data) => {
+                const selectElement = document.createElement("select");
+                selectElement.setAttribute("id", "querySelect");
 
+                data.forEach((item) => {
+                    const optionElement = document.createElement("option");
+                    optionElement.setAttribute("value", item.query);
+                    optionElement.textContent = item.query;
+                    selectElement.appendChild(optionElement);
+                });
 
-    function getAverageSalary(query) {
-        const url = `/analytics/average-salary/${query}`;
+                const container = document.getElementById("allAvailableContainer");
+                container.appendChild(selectElement);
+
+                addSelectEventHandler(selectElement);
+                if (data.length > 0) {
+                    const firstItem = data[0];
+                    getAnalyticsHistoryForQuery(firstItem.query);
+                }
+            })
+            .catch((error) => {
+                console.error("Error fetching data:", error);
+            });
+    }
+
+    function addSelectEventHandler(selectElement) {
+        selectElement.addEventListener("change", function () {
+            const selectedValue = selectElement.value;
+            getAnalyticsHistoryForQuery(selectedValue);
+        });
+    }
+
+    function getAnalyticsHistoryForQuery(query) {
+        const url = `/analytics/${query}`;
 
         fetch(url)
             .then((response) => {
@@ -54,24 +83,22 @@ document.addEventListener("DOMContentLoaded", function (event) {
             })
             .then((data) => {
                 const dates = data.map((item) => item.date)
-                const salaries = data.map((item) => item.salary)
-                averageSalaryChart(dates, salaries)
+                const salaries = data.map((item) => item.averageSalary)
+                buildAverageSalaryHistoryChart(dates, salaries)
             })
             .catch((error) => {
                 console.error("Error fetching data:", error);
             });
     }
 
-    let averageSalaryChartInstance;
-
-    function averageSalaryChart(averageSalaryDates, averageSalaryArray) {
+    function buildAverageSalaryHistoryChart(averageSalaryDates, averageSalaryArray) {
         const averageSalaryByQuery = document.getElementById('averageSalaryByQuery');
 
-        if (averageSalaryChartInstance) {
-            averageSalaryChartInstance.destroy();
+        if (averageSalaryHistoryChartInstance) {
+            averageSalaryHistoryChartInstance.destroy();
         }
 
-        averageSalaryChartInstance = new Chart(averageSalaryByQuery, {
+        averageSalaryHistoryChartInstance = new Chart(averageSalaryByQuery, {
             type: 'bar',
             data: {
                 labels: averageSalaryDates,
@@ -90,55 +117,64 @@ document.addEventListener("DOMContentLoaded", function (event) {
                 }
             }
         });
-
     }
 
+    function buildRecentAverageSalaryChart(queries, averageSalaryData) {
+        const averageSalary = document.getElementById('averageSalary');
 
-    function getAllAvailable() {
-        const url = `/analytics/allAvailable`;
+        if (recentAverageSalaryChartInstance) {
+            recentAverageSalaryChartInstance.destroy();
+        }
 
-        fetch(url)
-            .then((response) => {
-                if (!response.ok) {
-                    throw new Error("Network response was not ok");
+        recentAverageSalaryChartInstance = new Chart(averageSalary, {
+            type: 'bar',
+            data: {
+                labels: queries,
+                datasets: [{
+                    label: 'Average Salary',
+                    data: averageSalaryData,
+                    borderWidth: 1,
+                    backgroundColor: ['rgba(75, 192, 192, 0.2)']
+                }]
+            },
+            options: {
+                scales: {
+                    y: {
+                        beginAtZero: true
+                    }
                 }
-                return response.json();
-            })
-            .then((data) => {
-                const selectElement = document.createElement("select");
-                selectElement.setAttribute("id", "querySelect");
-
-
-                data.forEach((item) => {
-                    const optionElement = document.createElement("option");
-                    optionElement.setAttribute("value", item.query);
-                    optionElement.textContent = item.query;
-                    selectElement.appendChild(optionElement);
-                });
-
-                const container = document.getElementById("allAvailableContainer");
-                container.appendChild(selectElement);
-
-                addSelectEventHandler(selectElement);
-                if (data.length > 0) {
-                    const firstItem = data[0];
-                    getAverageSalary(firstItem.query);
-                }
-
-            })
-            .catch((error) => {
-                console.error("Error fetching data:", error);
-            });
-    }
-
-    function addSelectEventHandler(selectElement) {
-
-        selectElement.addEventListener("change", function () {
-            const selectedValue = selectElement.value;
-            getAverageSalary(selectedValue);
+            }
         });
     }
 
-    getAllAvailable();
+    function buildnumberOfVacanciesChart(queries, vacancyCount) {
+        const numberOfVacancies = document.getElementById('numberOfVacancy');
+
+        if (numberOfVacanciesChartInstance) {
+            numberOfVacanciesChartInstance.destroy();
+        }
+
+        numberOfVacanciesChartInstance = new Chart(numberOfVacancies, {
+            type: 'bar',
+            data: {
+                labels: queries,
+                datasets: [{
+                    label: 'Number of vacancies',
+                    data: vacancyCount,
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                scales: {
+                    y: {
+                        beginAtZero: true
+                    }
+                }
+            }
+        });
+    }
+
+    getRecentAnalytics();
+    getAnalyticsHistory();
 });
 

@@ -32,18 +32,6 @@
 </section>
 <footer th:replace="~{fragment/footer :: footer}"></footer>
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-<script th:inline="javascript">
-  const queries =[];
-  const vacancyCount =[];
-  const averageSalaryData =[];
-  /*<![CDATA[*/
-  /*[# th:each="q: ${analyticsQueryData}"]*/
-  queries.push([[${q.getQuery()}]]);
-  vacancyCount.push([[${q.getVacancyCount()}]]);
-  averageSalaryData.push([[${q.getSalary()}]]);
-  /*[/]*/
-  /*]]>*/
-</script>
 <script src="/js/scripts.js"></script>
 </body>
 </html>
