@@ -103,7 +103,7 @@ document.addEventListener("DOMContentLoaded", function (event) {
             data: {
                 labels: averageSalaryDates,
                 datasets: [{
-                    label: 'Average Salary by query',
+                    label: 'Average Salary',
                     data: averageSalaryArray,
                     borderWidth: 1,
                     backgroundColor: ['rgba(29, 207, 32, 0.2)']
@@ -112,7 +112,8 @@ document.addEventListener("DOMContentLoaded", function (event) {
             options: {
                 scales: {
                     y: {
-                        beginAtZero: true
+                        min: 50000,
+                        grace: '50%'
                     }
                 }
             }
