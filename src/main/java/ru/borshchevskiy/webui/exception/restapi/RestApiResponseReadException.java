@@ -2,7 +2,7 @@ package ru.borshchevskiy.webui.exception.restapi;
 
 import java.util.List;
 
-public class RestApiResponseReadException extends RestApiException{
+public class RestApiResponseReadException extends RestApiException {
     public RestApiResponseReadException() {
     }
 

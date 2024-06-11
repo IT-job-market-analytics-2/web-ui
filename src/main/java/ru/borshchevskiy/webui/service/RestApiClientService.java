@@ -113,8 +113,7 @@ public class RestApiClientService {
                 })
                 .retrieve()
                 .onStatus(HttpStatusCode::isError, this::handleError)
-                .body(new ParameterizedTypeReference<>() {
-                });
+                .body(new ParameterizedTypeReference<>() {});
     }
 
     @Retryable(retryFor = RestApiTokenUpdatedException.class, maxAttempts = 2)
@@ -127,8 +126,7 @@ public class RestApiClientService {
                 })
                 .retrieve()
                 .onStatus(HttpStatusCode::isError, this::handleError)
-                .body(new ParameterizedTypeReference<>() {
-                });
+                .body(new ParameterizedTypeReference<>() {});
     }
 
     @Retryable(retryFor = RestApiTokenUpdatedException.class, maxAttempts = 2)
@@ -141,8 +139,7 @@ public class RestApiClientService {
                 })
                 .retrieve()
                 .onStatus(HttpStatusCode::isError, this::handleError)
-                .body(new ParameterizedTypeReference<>() {
-                });
+                .body(new ParameterizedTypeReference<>() {});
     }
 
     @Retryable(retryFor = RestApiTokenUpdatedException.class, maxAttempts = 2)
@@ -155,8 +152,7 @@ public class RestApiClientService {
                 })
                 .retrieve()
                 .onStatus(HttpStatusCode::isError, this::handleError)
-                .body(new ParameterizedTypeReference<>() {
-                });
+                .body(new ParameterizedTypeReference<>() {});
     }
 
     public List<SubscriptionDto> getaAvailableQueries() {
@@ -164,18 +160,19 @@ public class RestApiClientService {
                 .uri(restApiUriProvider.getAvailableSubscriptionsUri())
                 .headers(headers -> {
                     headers.setContentType(APPLICATION_JSON);
-                    headers.setBearerAuth(getToken());
+                    headers.setBearerAuth(getAccessToken());
                 })
                 .retrieve()
                 .onStatus(HttpStatusCode::isError, this::handleError)
                 .body(new ParameterizedTypeReference<>() {});
     }
+
     public List<AnalyticsDto> getAnalyticsByQuery(String query) {
         List<AnalyticsDto> body = restClient.get()
                 .uri(restApiUriProvider.getAnalyticsByQueryUri(), query, 30)
                 .headers(headers -> {
                     headers.setContentType(APPLICATION_JSON);
-                    headers.setBearerAuth(getToken());
+                    headers.setBearerAuth(getAccessToken());
                 })
                 .retrieve()
                 .onStatus(HttpStatusCode::isError, this::handleError)
@@ -188,7 +185,7 @@ public class RestApiClientService {
                 .uri(restApiUriProvider.getRecentAnalyticsUri())
                 .headers(headers -> {
                     headers.setContentType(APPLICATION_JSON);
-                    headers.setBearerAuth(getToken());
+                    headers.setBearerAuth(getAccessToken());
                 })
                 .retrieve()
                 .onStatus(HttpStatusCode::isError, this::handleError)

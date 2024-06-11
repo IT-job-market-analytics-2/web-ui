@@ -1,7 +1,5 @@
 package ru.borshchevskiy.webui.dto.auth;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-
 import java.util.Objects;
 
 public class SignInResponseDto {

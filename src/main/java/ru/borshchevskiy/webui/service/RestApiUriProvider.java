@@ -91,6 +91,7 @@ public class RestApiUriProvider {
     public String getSignInUri() {
         return signInUri;
     }
+
     public String getTokenRefreshUri() {
         return tokenRefreshUri;
     }
@@ -118,6 +119,7 @@ public class RestApiUriProvider {
     public String getRemoveSubscriptionUri(String subscription) {
         return addPathSegment(removeSubscriptionUri, subscription);
     }
+
     public String getAnalyticsByQueryUri() {
         return analyticsByQueryUri;
     }

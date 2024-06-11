@@ -1,7 +1,6 @@
 package ru.borshchevskiy.webui.dto.subscription;
 
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
 import ru.borshchevskiy.webui.dto.validation.groups.OnUpdate;
 
 import java.util.Objects;
@@ -12,6 +11,7 @@ public class SubscriptionDto {
 
     public SubscriptionDto() {
     }
+
     public SubscriptionDto(String subscription) {
         this.query = subscription;
     }
