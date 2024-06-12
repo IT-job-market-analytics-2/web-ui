@@ -20,3 +20,8 @@ rest-api:
     analytics:
       by-query: "/analytics/history/{query}?depth={depth}"
       recent: "/analytics/byQuery"
+logging:
+  file:
+    path: logs/
+  level:
+    ru.borshchevskiy.webui: DEBUG

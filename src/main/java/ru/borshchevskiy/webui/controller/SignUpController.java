@@ -1,6 +1,8 @@
 package ru.borshchevskiy.webui.controller;
 
 import jakarta.servlet.http.HttpServletRequest;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -17,6 +19,7 @@ import ru.borshchevskiy.webui.service.RestApiClientService;
 public class SignUpController {
 
     private final RestApiClientService restApiClientService;
+    private static final Logger log = LoggerFactory.getLogger(SignUpController.class);
 
     public SignUpController(RestApiClientService restApiClientService) {
         this.restApiClientService = restApiClientService;
@@ -30,7 +33,9 @@ public class SignUpController {
 
     @PostMapping
     public String performSignUp(SignUpDto signUpDto) {
+        log.debug("Starting sign-up for username {}.", signUpDto.getUsername());
         restApiClientService.signUp(signUpDto);
+        log.debug("Sign-up for username {} successful.", signUpDto.getUsername());
         return "redirect:/sign-in";
     }
 
@@ -40,6 +45,7 @@ public class SignUpController {
                                          RedirectAttributes redirectAttributes) {
         SignUpDto user = new SignUpDto();
         String username = request.getParameter("username");
+        log.debug("Sign-up with username " + username + " failed with exception.", exception);
         user.setUsername(username);
         redirectAttributes.addFlashAttribute("user", user);
         redirectAttributes.addFlashAttribute("errorMessages", exception.getMessages());
