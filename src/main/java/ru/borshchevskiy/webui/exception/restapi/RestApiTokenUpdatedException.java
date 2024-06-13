@@ -2,7 +2,7 @@ package ru.borshchevskiy.webui.exception.restapi;
 
 import java.util.List;
 
-public class RestApiTokenUpdatedException extends RestApiException{
+public class RestApiTokenUpdatedException extends RestApiException {
     public RestApiTokenUpdatedException() {
     }
 

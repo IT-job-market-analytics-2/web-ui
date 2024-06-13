@@ -2,7 +2,7 @@ package ru.borshchevskiy.webui.exception.restapi;
 
 import java.util.List;
 
-public class RestApiUnauthorizedException extends RestApiException{
+public class RestApiUnauthorizedException extends RestApiException {
     public RestApiUnauthorizedException() {
     }
 
