@@ -1,5 +1,7 @@
 package ru.borshchevskiy.webui.controller;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -18,6 +20,7 @@ import java.util.List;
 public class HomePageController {
 
     private final RestApiClientService restApiClientService;
+    private static final Logger log = LoggerFactory.getLogger(HomePageController.class);
 
     public HomePageController(RestApiClientService restApiClientService) {
         this.restApiClientService = restApiClientService;
@@ -33,6 +36,7 @@ public class HomePageController {
 
     @ExceptionHandler(RestApiUnauthorizedException.class)
     public ModelAndView handleRestApiUnauthorizedException(RestApiUnauthorizedException exception) {
+        log.debug("Handling RestApiUnauthorizedException - {}, setting main page ModelAndView.", exception.getMessage());
         ModelAndView modelAndView = new ModelAndView();
         modelAndView.setViewName("index");
         modelAndView.addObject("isLoggedIn", false);
@@ -41,6 +45,8 @@ public class HomePageController {
 
     @ExceptionHandler(RestApiException.class)
     public ModelAndView handleRestApiException(RestApiException exception) {
+        log.error("Handling Error from REST API " + exception.getMessages() +
+                ". Setting main page ModelAndView.", exception);
         ModelAndView modelAndView = new ModelAndView();
         List<String> errors = exception.getMessages();
         modelAndView.setViewName("index");

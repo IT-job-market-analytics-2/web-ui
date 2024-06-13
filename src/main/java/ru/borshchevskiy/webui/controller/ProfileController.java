@@ -1,5 +1,7 @@
 package ru.borshchevskiy.webui.controller;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.context.support.DefaultMessageSourceResolvable;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -20,6 +22,7 @@ import java.util.List;
 public class ProfileController {
 
     private final RestApiClientService restApiClientService;
+    private static final Logger log = LoggerFactory.getLogger(ProfileController.class);
 
     public ProfileController(RestApiClientService restApiClientService) {
         this.restApiClientService = restApiClientService;
@@ -47,10 +50,13 @@ public class ProfileController {
             List<String> errorMessages = bindingResult.getAllErrors().stream()
                     .map(DefaultMessageSourceResolvable::getDefaultMessage)
                     .toList();
+            log.debug("Failed to update user {}, validation error - {}.", user.getUsername(), errorMessages);
             redirectAttributes.addFlashAttribute("updateErrorMessages", errorMessages);
             return "redirect:/profile";
         }
+        log.debug("Trying to update user {}.", user.getUsername());
         restApiClientService.updateUser(user);
+        log.debug("User {} updated successfully.", user.getUsername());
         redirectAttributes.addFlashAttribute("isProfileUpdated", true);
         return "redirect:/profile";
     }
@@ -89,6 +95,7 @@ public class ProfileController {
     public String handleRestApiClientErrorException(RestApiClientErrorException exception,
                                                     RedirectAttributes redirectAttributes) {
         List<String> errors = exception.getMessages();
+        log.error("Error from REST API " + exception.getMessages(), exception);
         redirectAttributes.addFlashAttribute("errorMessages", errors);
         return "redirect:/profile";
     }

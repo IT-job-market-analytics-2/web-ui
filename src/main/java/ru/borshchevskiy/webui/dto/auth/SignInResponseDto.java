@@ -1,10 +1,7 @@
 package ru.borshchevskiy.webui.dto.auth;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-
 import java.util.Objects;
 
-@JsonIgnoreProperties(ignoreUnknown = true)
 public class SignInResponseDto {
     private Long id;
     private String username;

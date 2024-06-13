@@ -24,7 +24,7 @@
         <canvas id="averageSalary"></canvas>
       </div>
       <div class="col-sm-12 col-md-12 mt-5">
-        <h4 class="d-flex">Average salary by technology <div id="allAvailableContainer"></div></h4>
+        <h4 class="d-flex">Average salary history for: <div id="allAvailableContainer"></div></h4>
         <canvas id="averageSalaryByQuery"></canvas>
       </div>
     </div>
@@ -32,18 +32,6 @@
 </section>
 <footer th:replace="~{fragment/footer :: footer}"></footer>
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-<script th:inline="javascript">
-  const queries =[];
-  const vacancyCount =[];
-  const averageSalaryData =[];
-  /*<![CDATA[*/
-  /*[# th:each="q: ${analyticsQueryData}"]*/
-  queries.push([[${q.getQuery()}]]);
-  vacancyCount.push([[${q.getVacancyCount()}]]);
-  averageSalaryData.push([[${q.getSalary()}]]);
-  /*[/]*/
-  /*]]>*/
-</script>
 <script src="/js/scripts.js"></script>
 </body>
 </html>
