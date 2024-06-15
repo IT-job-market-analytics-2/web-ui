@@ -1,5 +1,9 @@
 package ru.borshchevskiy.webui.dto.analytics;
 
+import com.fasterxml.jackson.annotation.JsonAlias;
+import com.fasterxml.jackson.annotation.JsonAnyGetter;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import java.time.LocalDate;
 import java.util.Objects;
 
@@ -7,6 +11,8 @@ public class AnalyticsDto {
 
     private String query;
     private Long vacancyCount;
+    @JsonProperty("averageSalary")
+    @JsonAlias("salary")
     private Double averageSalary;
     private LocalDate date;
 

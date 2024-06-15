@@ -87,7 +87,6 @@ public class RestApiClientService {
         UserDto response = restClient.get()
                 .uri(restApiUriProvider.getUserUri())
                 .headers(headers -> {
-                    headers.setContentType(APPLICATION_JSON);
                     headers.setBearerAuth(getAccessToken());
                 })
                 .retrieve()
@@ -120,7 +119,6 @@ public class RestApiClientService {
         List<SubscriptionDto> response = restClient.get()
                 .uri(restApiUriProvider.getCurrentSubscriptionsUri())
                 .headers(headers -> {
-                    headers.setContentType(APPLICATION_JSON);
                     headers.setBearerAuth(getAccessToken());
                 })
                 .retrieve()
@@ -136,10 +134,6 @@ public class RestApiClientService {
         log.debug("Sending request to get list of available subscriptions.");
         List<SubscriptionDto> response = restClient.get()
                 .uri(restApiUriProvider.getAvailableSubscriptionsUri())
-                .headers(headers -> {
-                    headers.setContentType(APPLICATION_JSON);
-                    headers.setBearerAuth(getAccessToken());
-                })
                 .retrieve()
                 .onStatus(HttpStatusCode::isError, this::handleError)
                 .body(new ParameterizedTypeReference<>() {
@@ -186,10 +180,6 @@ public class RestApiClientService {
         log.debug("Sending request to get list of available queries.");
         List<SubscriptionDto> response = restClient.get()
                 .uri(restApiUriProvider.getAvailableSubscriptionsUri())
-                .headers(headers -> {
-                    headers.setContentType(APPLICATION_JSON);
-                    headers.setBearerAuth(getAccessToken());
-                })
                 .retrieve()
                 .onStatus(HttpStatusCode::isError, this::handleError)
                 .body(new ParameterizedTypeReference<>() {
@@ -202,10 +192,6 @@ public class RestApiClientService {
         log.debug("Sending request to get analytics for query {}.", query);
         List<AnalyticsDto> body = restClient.get()
                 .uri(restApiUriProvider.getAnalyticsByQueryUri(), query, 30)
-                .headers(headers -> {
-                    headers.setContentType(APPLICATION_JSON);
-                    headers.setBearerAuth(getAccessToken());
-                })
                 .retrieve()
                 .onStatus(HttpStatusCode::isError, this::handleError)
                 .body(new ParameterizedTypeReference<>() {
@@ -218,10 +204,6 @@ public class RestApiClientService {
         log.debug("Sending request to get recent analytics for all queries.");
         List<AnalyticsDto> body = restClient.get()
                 .uri(restApiUriProvider.getRecentAnalyticsUri())
-                .headers(headers -> {
-                    headers.setContentType(APPLICATION_JSON);
-                    headers.setBearerAuth(getAccessToken());
-                })
                 .retrieve()
                 .onStatus(HttpStatusCode::isError, this::handleError)
                 .body(new ParameterizedTypeReference<>() {
