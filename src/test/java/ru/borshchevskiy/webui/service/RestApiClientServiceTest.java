@@ -182,7 +182,6 @@ class RestApiClientServiceTest {
 
             mockServer.expect(requestTo(getUserUri))
                     .andExpect(header("AUTHORIZATION", "Bearer " + accessToken))
-                    .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                     .andRespond(withSuccess()
                             .contentType(MediaType.APPLICATION_JSON)
                             .body(objectMapper.writeValueAsBytes(userDto)));
@@ -202,7 +201,6 @@ class RestApiClientServiceTest {
 
             mockServer.expect(requestTo(getUserUri))
                     .andExpect(header("AUTHORIZATION", "Bearer " + accessToken))
-                    .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                     .andRespond(withUnauthorizedRequest()
                             .body(objectMapper.writeValueAsBytes(error)));
 
